@@ -25,5 +25,13 @@ markdown_extensions:
 
 nav:
   - Start: index.md
-  - Hardware: hardware.md
+  - Hardware:
+      - Übersicht: hardware.md
+      - Energie (AXP2101): energie.md
+      - Display (CO5300): display.md
+      - Touch und Tasten: eingabe.md
+      - Bewegungssensor (QMI8658): imu.md
+      - Audio (ES8311, ES7210): audio.md
+      - Funk (WLAN, BLE): funk.md
+      - Weitere Bausteine: weitere-bausteine.md
   - Stromverbrauch: stromverbrauch.md

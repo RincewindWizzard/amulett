@@ -15,7 +15,7 @@ Das Repo enthält ein `no_std`-Gerüst mit esp-hal 1.x (nur I2C-Scan, siehe `src
 
 ## Decisions
 
-- **`no_std` + esp-hal bleibt**, Async mit Embassy (`esp-rtos`) für die gleichzeitige Nutzung von Touch, IMU und Anzeige. Alternative: esp-idf-hal (std) bietet fertige Audio/WLAN-Komponenten, wurde aber bereits abgelehnt (größerer Build).
+- **`no_std` + esp-hal bleibt**. Umgesetzt wurde eine blockierende Hauptschleife (ca. 30 ms pro Bild), die Touch, Tasten und Sensoren nacheinander abfragt; `esp-rtos` läuft nur als Scheduler für den Funk. Ein Embassy-Executor wäre die Alternative, wenn Reaktionszeiten kritisch werden. Alternative: esp-idf-hal (std) bietet fertige Audio/WLAN-Komponenten, wurde aber bereits abgelehnt (größerer Build).
 - **Treiber:** vorhandene `embedded-hal`-Treiber-Crates nutzen (z. B. für QMI8658, AXP2101), wenn sie mit esp-hal 1.x funktionieren; sonst kleine eigene Register-Zugriffe im Modul, damit die Doku das Protokoll erklären kann. CO5300 und CST9217 vermutlich eigene Implementierung, angelehnt an Herstellerbeispiele (C/Arduino).
 - **Grafik:** `embedded-graphics` mit einem Framebuffer im PSRAM (466×466×16 bit ≈ 434 KB, passt nicht in internen SRAM). Alternative: zeilenweise zeichnen ohne Framebuffer — weniger Speicher, aber komplexer für Demos.
 - **Gemeinsamer I2C-Bus** wird über einen Shared-Bus-Wrapper (`embassy-embedded-hal` bzw. RefCell-Mutex) auf Touch, IMU, PMIC verteilt.
