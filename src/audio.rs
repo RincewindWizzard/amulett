@@ -45,6 +45,7 @@ pub mod es8311 {
             Ok([self.read(0xFD)?, self.read(0xFE)?])
         }
 
+        // --8<-- [start:es8311_init]
         /// 16 kHz, 16 bit, I2S slave, MCLK from pin at 4.096 MHz (256 x fs).
         pub fn init(&mut self, delay: &esp_hal::delay::Delay) -> Result<(), I2C::Error> {
             // Reset, then power-on command.
@@ -76,6 +77,7 @@ pub mod es8311 {
             self.write(0x13, 0x10)?; // enable output to headphone drive
             self.write(0x1C, 0x6A)?; // ADC equalizer bypass, cancel DC offset
             self.write(0x37, 0x08)?; // bypass DAC equalizer
+        // --8<-- [end:es8311_init]
             Ok(())
         }
 
@@ -86,6 +88,7 @@ pub mod es8311 {
             self.write(0x32, reg as u8)
         }
 
+        #[allow(dead_code)]
         pub fn mute(&mut self, mute: bool) -> Result<(), I2C::Error> {
             self.update(0x31, (1 << 6) | (1 << 5), if mute { 0xFF } else { 0x00 })
         }
@@ -144,6 +147,7 @@ pub mod es7210 {
             self.write(0x12, 0x00)
         }
 
+        // --8<-- [start:es7210_init]
         /// Open + configure (slave, 16 bit I2S) + start capturing.
         pub fn init(&mut self) -> Result<(), I2C::Error> {
             self.write(0x00, 0xFF)?;
@@ -179,12 +183,14 @@ pub mod es7210 {
             self.write(0x40, 0x43)?;
             self.write(0x00, 0x71)?;
             self.write(0x00, 0x41)
+        // --8<-- [end:es7210_init]
         }
     }
 }
 
 /// Peak amplitude (0.0..=1.0) of the left and right channel of 16-bit
 /// interleaved little-endian stereo samples.
+// --8<-- [start:levels]
 pub fn peak_levels(bytes: &[u8]) -> (f32, f32) {
     let (mut l, mut r) = (0i32, 0i32);
     for frame in bytes.chunks_exact(4) {
@@ -194,6 +200,7 @@ pub fn peak_levels(bytes: &[u8]) -> (f32, f32) {
         r = r.max(right.abs());
     }
     (l as f32 / 32768.0, r as f32 / 32768.0)
+// --8<-- [end:levels]
 }
 
 /// Fills `buf` with a 400 Hz sine (exactly 40 frames per period at 16 kHz),
@@ -286,10 +293,6 @@ impl<'d> AudioIo<'d> {
             self.loop_buf = Some(buf);
         }
         self.amplifier.set_low();
-    }
-
-    pub fn capture_active(&self) -> bool {
-        self.capture.is_some()
     }
 
     pub fn start_capture(&mut self) -> bool {

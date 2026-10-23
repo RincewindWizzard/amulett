@@ -28,6 +28,7 @@ impl<I2C: I2c> Cst9217<I2C> {
         Self { i2c }
     }
 
+    // --8<-- [start:read]
     /// Reads the current report. Returns the number of valid points written
     /// to `points` (0 when the finger has been lifted).
     pub fn read_points(&mut self, points: &mut [Point; MAX_FINGERS]) -> Result<usize, I2C::Error> {
@@ -59,5 +60,6 @@ impl<I2C: I2c> Cst9217<I2C> {
             valid += 1;
         }
         Ok(valid)
+    // --8<-- [end:read]
     }
 }

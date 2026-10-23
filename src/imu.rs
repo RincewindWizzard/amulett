@@ -47,14 +47,17 @@ impl<I2C: I2c> Qmi8658<I2C> {
         self.read(REG_WHO_AM_I)
     }
 
+    // --8<-- [start:init]
     /// Enables accelerometer and gyroscope with register auto-increment.
     pub fn init(&mut self) -> Result<(), I2C::Error> {
         self.i2c.write(ADDR, &[REG_CTRL1, 0x40])?;
         self.i2c.write(ADDR, &[REG_CTRL2, CTRL2_ACC])?;
         self.i2c.write(ADDR, &[REG_CTRL3, CTRL3_GYR])?;
         self.i2c.write(ADDR, &[REG_CTRL7, 0b0000_0011])
+    // --8<-- [end:init]
     }
 
+    // --8<-- [start:sample]
     /// Returns `None` until both sensors have a fresh sample.
     pub fn read_sample(&mut self) -> Result<Option<Sample>, I2C::Error> {
         if self.read(REG_STATUS0)? & 0b11 != 0b11 {
@@ -75,5 +78,6 @@ impl<I2C: I2c> Qmi8658<I2C> {
                 word(5) / GYR_LSB_PER_DPS,
             ],
         }))
+    // --8<-- [end:sample]
     }
 }

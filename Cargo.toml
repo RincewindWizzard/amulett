@@ -10,6 +10,9 @@ esp-bootloader-esp-idf = { version = "0.6.0", features = ["esp32s3"] }
 esp-backtrace = { version = "0.20.0", features = ["esp32s3", "panic-handler", "println"] }
 esp-println = { version = "0.18.0", features = ["esp32s3", "log-04"] }
 log = "0.4"
+esp-rtos = { version = "0.4.0", features = ["esp32s3", "esp-radio", "esp-alloc"] }
+esp-radio = { version = "=1.0.0-beta.1", features = ["esp32s3", "wifi", "ble", "unstable", "esp-alloc"] }
+embassy-futures = "0.1.1"
 esp-alloc = { version = "0.11.0", features = ["esp32s3"] }
 embedded-hal = "1.0.0"
 embedded-hal-bus = "0.3.0"
@@ -18,6 +21,13 @@ embedded-graphics = "0.8.2"
 [profile.dev]
 # Rust debug builds are too slow for the ESP32
 opt-level = "s"
+
+[profile.dev.package.esp-radio]
+# The radio blobs need optimization level 2 or 3, otherwise BLE may fail to advertise.
+opt-level = 3
+
+[profile.release.package.esp-radio]
+opt-level = 3
 
 [profile.release]
 codegen-units = 1

@@ -14,6 +14,7 @@ mod pmic;
 mod rtc;
 mod touch;
 mod ui;
+mod wireless;
 
 use alloc::{format, string::String, vec::Vec};
 use core::cell::RefCell;
@@ -44,14 +45,18 @@ use esp_println::println;
 
 esp_bootloader_esp_idf::esp_app_desc!();
 
-const PAGE_TITLES: [&str; 5] = [
+const PAGE_TITLES: [&str; 6] = [
     "Testbild + Touch",
     "Energie (AXP2101)",
     "IMU (QMI8658)",
     "Audio (ES8311/ES7210)",
+    "Funk (WLAN + BLE)",
     "Info + I2C",
 ];
 const PAGE_AUDIO: usize = 3;
+const PAGE_RADIO: usize = 4;
+const BLE_NAME: &str = "amulett";
+const BLE_INTERVAL_MS: u32 = 1000;
 const FRAME_MS: u32 = 30;
 const SWIPE_MIN_DX: i32 = 100;
 const SWIPE_MAX_DY: i32 = 120;
@@ -121,7 +126,15 @@ fn main() -> ! {
     let peripherals = esp_hal::init(esp_hal::Config::default().with_cpu_clock(CpuClock::max()));
     let delay = Delay::new();
 
+    // The radio needs internal RAM; the large framebuffer goes to PSRAM.
+    esp_alloc::heap_allocator!(#[esp_hal::ram(reclaimed)] size: 64 * 1024);
+    esp_alloc::heap_allocator!(size: 36 * 1024);
     esp_alloc::psram_allocator!(peripherals.PSRAM, esp_hal::psram);
+
+    let timg0 = esp_hal::timer::timg::TimerGroup::new(peripherals.TIMG0);
+    esp_rtos::start(timg0.timer0, peripherals.FROM_CPU_INTR0);
+    let wifi_peripheral = peripherals.WIFI;
+    let mut bt_peripheral = peripherals.BT;
 
     println!("amulett: booting");
 
@@ -231,6 +244,10 @@ fn main() -> ! {
         amplifier,
     );
     let mut mic_levels = (0.0f32, 0.0f32);
+    let mut advertiser: Option<wireless::Advertiser<'_>> = None;
+    let mut radio_status = String::from("BLE aus");
+    let mut wifi_list: Vec<wireless::AccessPoint> = Vec::new();
+    let mut wifi_note = String::from("Tippen: WLAN-Scan");
 
     let mut touch = touch::Cst9217::new(RefCellDevice::new(&bus));
     let mut rtc = rtc::Pcf85063::new(RefCellDevice::new(&bus));
@@ -304,7 +321,32 @@ fn main() -> ! {
             Some(TouchEvent::Move) | None => {}
             Some(TouchEvent::Tap(x, y)) => {
                 println!("tap at ({x}, {y})");
-                if page == PAGE_AUDIO {
+                if page == PAGE_RADIO {
+                    // Radio and scan share the antenna: stop BLE while scanning.
+                    if let Some(a) = advertiser.take() {
+                        a.stop();
+                    }
+                    wifi_note = String::from("Scanne ...");
+                    draw_radio_page(&mut fb, &radio_status, &wifi_note, &wifi_list);
+                    let _ = fb.flush(&mut panel);
+                    // SAFETY: the previous Wi-Fi controller has been dropped.
+                    let wifi = unsafe { wifi_peripheral.clone_unchecked() };
+                    match wireless::scan_wifi(wifi, 6) {
+                        Ok(list) => {
+                            println!("wifi scan: {} networks", list.len());
+                            for ap in &list {
+                                println!("  {} ({} dBm, ch {})", ap.ssid, ap.rssi, ap.channel);
+                            }
+                            wifi_note = format!("{} Netze gefunden", list.len());
+                            wifi_list = list;
+                        }
+                        Err(e) => {
+                            println!("wifi scan failed: {e:?}");
+                            wifi_note = String::from("Scan fehlgeschlagen");
+                        }
+                    }
+                    radio_status = start_ble(&mut advertiser, &mut bt_peripheral);
+                } else if page == PAGE_AUDIO {
                     if audio_io.tone_active() {
                         audio_io.stop_tone();
                     } else if !audio_io.start_tone() {
@@ -331,6 +373,15 @@ fn main() -> ! {
             if previous == PAGE_AUDIO {
                 audio_io.stop_tone();
                 audio_io.stop_capture();
+            }
+            if previous == PAGE_RADIO {
+                if let Some(a) = advertiser.take() {
+                    a.stop();
+                }
+                radio_status = String::from("BLE aus");
+            }
+            if page == PAGE_RADIO {
+                radio_status = start_ble(&mut advertiser, &mut bt_peripheral);
             }
             if page == PAGE_AUDIO && !audio_io.start_capture() {
                 println!("microphone capture could not be started");
@@ -361,6 +412,7 @@ fn main() -> ! {
             1 => draw_power_page(&mut fb, &power_status),
             2 => draw_imu_page(&mut fb, &imu_sample),
             PAGE_AUDIO => draw_audio_page(&mut fb, mic_levels, audio_io.tone_active()),
+            PAGE_RADIO => draw_radio_page(&mut fb, &radio_status, &wifi_note, &wifi_list),
             _ => draw_info_page(&mut fb, &found, &mut rtc),
         }
         if let Err(e) = fb.flush(&mut panel) {
@@ -442,6 +494,43 @@ fn draw_imu_page(fb: &mut display::Framebuffer, s: &imu::Sample) {
     ui::bar(fb, 315, 240, (s.accel[1] + 1.0) / 2.0, Rgb565::CYAN);
 }
 
+/// Starts BLE advertising and returns a status line for the display.
+fn start_ble<'d>(
+    advertiser: &mut Option<wireless::Advertiser<'d>>,
+    bt: &mut esp_hal::peripherals::BT<'d>,
+) -> String {
+    // SAFETY: only one advertiser exists at a time; the previous one was dropped.
+    let bt = unsafe { bt.clone_unchecked() };
+    match wireless::Advertiser::start(bt, BLE_NAME, BLE_INTERVAL_MS) {
+        Ok(a) => {
+            *advertiser = Some(a);
+            println!("BLE advertising as '{BLE_NAME}' every {BLE_INTERVAL_MS} ms");
+            format!("BLE: '{BLE_NAME}' alle {BLE_INTERVAL_MS} ms")
+        }
+        Err(e) => {
+            println!("BLE start failed: {e:?}");
+            String::from("BLE Start fehlgeschlagen")
+        }
+    }
+}
+
+fn draw_radio_page(
+    fb: &mut display::Framebuffer,
+    ble: &str,
+    wifi_note: &str,
+    list: &[wireless::AccessPoint],
+) {
+    let mut lines: Vec<String> = Vec::new();
+    lines.push(String::from(ble));
+    lines.push(String::from(wifi_note));
+    for ap in list.iter().take(5) {
+        let mut name = ap.ssid.clone();
+        name.truncate(16);
+        lines.push(format!("{name} {}dBm", ap.rssi));
+    }
+    ui::page(fb, PAGE_TITLES[PAGE_RADIO], PAGE_RADIO, PAGE_TITLES.len(), &lines);
+}
+
 fn draw_audio_page(fb: &mut display::Framebuffer, levels: (f32, f32), tone: bool) {
     let lines = [
         format!("Ton: {} (Tippen)", if tone { "an" } else { "aus" }),
@@ -475,5 +564,5 @@ fn draw_info_page(
     for (addr, name) in found {
         lines.push(format!("0x{addr:02X} {name}"));
     }
-    ui::page(fb, PAGE_TITLES[4], 4, PAGE_TITLES.len(), &lines);
+    ui::page(fb, PAGE_TITLES[5], 5, PAGE_TITLES.len(), &lines);
 }

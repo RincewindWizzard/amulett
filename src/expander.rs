@@ -38,8 +38,10 @@ impl<I2C: I2c> Tca9554<I2C> {
         Ok(b[0])
     }
 
+    // --8<-- [start:pwr]
     /// `true` while the PWR button is held (SYS_OUT is high when pressed).
     pub fn pwr_pressed(&mut self) -> Result<bool, I2C::Error> {
         Ok(self.read_inputs()? & (1 << PIN_SYS_OUT) != 0)
+    // --8<-- [end:pwr]
     }
 }

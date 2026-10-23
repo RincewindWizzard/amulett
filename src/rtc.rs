@@ -35,6 +35,7 @@ impl<I2C: I2c> Pcf85063<I2C> {
         Self { i2c }
     }
 
+    // --8<-- [start:read]
     pub fn read(&mut self) -> Result<DateTime, I2C::Error> {
         let mut r = [0u8; 7];
         self.i2c.write_read(ADDR, &[REG_SECONDS], &mut r)?;
@@ -46,6 +47,7 @@ impl<I2C: I2c> Pcf85063<I2C> {
             day: bcd_to_bin(r[3] & 0x3F),
             month: bcd_to_bin(r[5] & 0x1F),
             year: 2000 + bcd_to_bin(r[6]) as u16,
+    // --8<-- [end:read]
         })
     }
 

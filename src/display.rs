@@ -50,6 +50,7 @@ impl<'d> Co5300<'d> {
         Self { spi, reset }
     }
 
+    // --8<-- [start:write_reg]
     fn write_reg(&mut self, reg: u8, data: &[u8]) -> Result<(), SpiError> {
         self.spi.half_duplex_write(
             DataMode::Single,
@@ -57,9 +58,11 @@ impl<'d> Co5300<'d> {
             Address::_24Bit((reg as u32) << 8, DataMode::Single),
             0,
             data,
+    // --8<-- [end:write_reg]
         )
     }
 
+    // --8<-- [start:init]
     /// Hardware reset followed by the vendor init sequence.
     pub fn init(&mut self, delay: &Delay) -> Result<(), SpiError> {
         self.reset.set_high();
@@ -80,6 +83,7 @@ impl<'d> Co5300<'d> {
         self.write_reg(CMD_BRIGHTNESS, &[0xD0])?;
         self.write_reg(CMD_CE, &[0x00])?; // contrast enhancement off
         delay.delay_millis(10);
+    // --8<-- [end:init]
         Ok(())
     }
 
@@ -116,6 +120,7 @@ impl<'d> Co5300<'d> {
         self.write_reg(CMD_RAMWR, &[])
     }
 
+    // --8<-- [start:blit]
     /// Writes big-endian RGB565 pixel bytes into the given window.
     pub fn blit(&mut self, x: u16, y: u16, w: u16, h: u16, bytes: &[u8]) -> Result<(), SpiError> {
         self.set_window(x, y, x + w - 1, y + h - 1)?;
@@ -129,6 +134,7 @@ impl<'d> Co5300<'d> {
             )?;
         }
         Ok(())
+    // --8<-- [end:blit]
     }
 }
 

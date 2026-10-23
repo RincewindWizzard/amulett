@@ -78,11 +78,13 @@ impl<I2C: I2c> Axp2101<I2C> {
         self.read(REG_IC_TYPE)
     }
 
+    // --8<-- [start:adc]
     /// Enables battery detection and the ADC channels used by [`Self::status`].
     pub fn enable_measurements(&mut self) -> Result<(), I2C::Error> {
         self.set_bits(REG_BAT_DET, 1 << 0)?;
         // bit0 VBAT, bit2 VBUS, bit3 VSYS, bit4 die temperature
         self.set_bits(REG_ADC_CTRL, 0b0001_1101)
+    // --8<-- [end:adc]
     }
 
     /// Raw enable registers: DC-DC 1..5, ALDO1..4 + BLDO1..2, CPUSLDO + DLDO1..2.
@@ -94,6 +96,7 @@ impl<I2C: I2c> Axp2101<I2C> {
         ])
     }
 
+    // --8<-- [start:status]
     pub fn status(&mut self) -> Result<Status, I2C::Error> {
         let s1 = self.read(REG_STATUS1)?;
         let s2 = self.read(REG_STATUS2)?;
@@ -130,6 +133,7 @@ impl<I2C: I2c> Axp2101<I2C> {
             vsys_mv,
             percent,
             die_temp_c: 22.0 + (7274.0 - raw_temp as f32) / 20.0,
+    // --8<-- [end:status]
         })
     }
 }
