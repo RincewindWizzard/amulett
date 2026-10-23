@@ -14,6 +14,7 @@ mod expander;
 mod imu;
 #[allow(dead_code)]
 mod input;
+#[allow(dead_code)]
 mod pmic;
 #[cfg(feature = "poc")]
 mod poc;
