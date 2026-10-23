@@ -1,5 +1,7 @@
 # Tasks
 
+> **Stand (Pages):** GitHub Pages ist aktiv, die Doku ist unter https://rincewindwizzard.github.io/amulett/ erreichbar (Docs-Workflow grün). 8.4 wartet auf den letzten grünen Build-Lauf.
+>
 > **Stand der Umsetzung:** Der gesamte Firmware-Code (Gruppen 2–7) ist geschrieben
 > und kompiliert (`cargo build --release --locked`), das Flash-Image lässt sich
 > erzeugen. Die offenen Aufgaben sind jene, deren Prüfschritt das Gerät braucht
@@ -52,8 +54,8 @@
 ## 8. Dokumentationsseite und Veröffentlichung
 
 - [x] 8.1 `mkdocs.yml` (Material, Deutsch, Navigation, Snippet-Includes aus `src/`) und `docs/index.md` anlegen; `mkdocs build --strict` läuft fehlerfrei
-- [ ] 8.2 `.github/workflows/docs.yml` für Build bei PR und Deploy auf GitHub Pages bei Push auf `main` anlegen; Workflow-Lauf ist grün und Seite erreichbar
-- [ ] 8.3 README mit Link auf die gehostete Doku-URL ergänzen und prüfen, dass der Link auflöst
+- [x] 8.2 `.github/workflows/docs.yml` für Build bei PR und Deploy auf GitHub Pages bei Push auf `main` anlegen; Workflow-Lauf ist grün und Seite erreichbar
+- [x] 8.3 README mit Link auf die gehostete Doku-URL ergänzen und prüfen, dass der Link auflöst
 - [ ] 8.4 Gesamtprüfung: alle Herstellerlinks in der Doku erreichbar, CI-Build und Doku-Build grün
 
 ## Workflow follow-up

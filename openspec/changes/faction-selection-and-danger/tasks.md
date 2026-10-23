@@ -31,7 +31,7 @@
 
 - [x] 4.1 Seite `docs/fraktionen.md`: Spielregel, Bedienung, Beacon-Format Version 2, Gefahr-Parameter, Grenzen (Fälschbarkeit, Latenz, RSSI); `mkdocs build --strict` läuft fehlerfrei
 - [x] 4.2 Bedienungsabschnitt in `docs/index.md` und README um Fraktionswahl ergänzen
-- [ ] 4.3 CI: Host-Tests (`amulett-core`) laufen mit den neuen Tests grün
+- [x] 4.3 CI: Host-Tests (`amulett-core`) laufen mit den neuen Tests grün
 
 ## Workflow follow-up
 
