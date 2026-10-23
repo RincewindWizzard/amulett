@@ -33,7 +33,7 @@
 
 ## 5. Abschluss
 
-- [ ] 5.1 CI: Job für Host-Tests (`amulett-core`) läuft grün
+- [x] 5.1 CI: Job für Host-Tests (`amulett-core`) läuft grün
 - [ ] 5.2 Feldtest mit mindestens zwei Geräten (nah, fern, durch Körper abgeschirmt, drei Geräte); Messwerte und Schlussfolgerungen in `docs/farbanzeige.md` eintragen und Parameter anpassen
 
 ## Workflow follow-up
