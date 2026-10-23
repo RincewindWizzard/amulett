@@ -1,4 +1,9 @@
-//! Touch gestures shared by the PoC pages and the product screens.
+//! Touch gestures and buttons shared by the PoC pages, the product and the power study.
+
+use embedded_hal_bus::i2c::RefCellDevice;
+use esp_hal::{gpio::Input, i2c::master::I2c};
+
+use crate::expander::Tca9554;
 
 const SWIPE_MIN_DX: i32 = 100;
 const SWIPE_MAX_DY: i32 = 120;
@@ -66,3 +71,32 @@ impl Gesture {
         }
     }
 }
+
+/// A device on the shared I2C bus.
+pub type Bus<'a> = RefCellDevice<'a, I2c<'a, esp_hal::Blocking>>;
+
+/// Edge detection for the two side buttons.
+pub struct Buttons<'d> {
+    boot: Input<'d>,
+    boot_was_down: bool,
+    pwr_was_down: bool,
+}
+
+impl<'d> Buttons<'d> {
+    pub fn new(boot: Input<'d>) -> Self {
+        let boot_was_down = boot.is_low();
+        Self { boot, boot_was_down, pwr_was_down: true }
+    }
+
+    /// Returns (BOOT pressed, PWR pressed) since the last call.
+    pub fn poll(&mut self, expander: &mut Tca9554<Bus<'_>>) -> (bool, bool) {
+        let boot_down = self.boot.is_low();
+        let boot = boot_down && !self.boot_was_down;
+        self.boot_was_down = boot_down;
+        let pwr_down = expander.pwr_pressed().unwrap_or(false);
+        let pwr = pwr_down && !self.pwr_was_down;
+        self.pwr_was_down = pwr_down;
+        (boot, pwr)
+    }
+}
+

@@ -56,7 +56,7 @@
 - [x] 8.1 `mkdocs.yml` (Material, Deutsch, Navigation, Snippet-Includes aus `src/`) und `docs/index.md` anlegen; `mkdocs build --strict` läuft fehlerfrei
 - [x] 8.2 `.github/workflows/docs.yml` für Build bei PR und Deploy auf GitHub Pages bei Push auf `main` anlegen; Workflow-Lauf ist grün und Seite erreichbar
 - [x] 8.3 README mit Link auf die gehostete Doku-URL ergänzen und prüfen, dass der Link auflöst
-- [ ] 8.4 Gesamtprüfung: alle Herstellerlinks in der Doku erreichbar, CI-Build und Doku-Build grün
+- [x] 8.4 Gesamtprüfung: alle Herstellerlinks in der Doku erreichbar, CI-Build und Doku-Build grün
 
 ## Workflow follow-up
 

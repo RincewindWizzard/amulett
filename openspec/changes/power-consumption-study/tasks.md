@@ -1,5 +1,7 @@
 # Tasks
 
+> **Stand der Umsetzung:** Messprogramm (`--features power`) mit Menü und Szenarien für Display, CPU, BLE, Light-/Deep-Sleep, RTC-Zähler, Weckquellen (Timer, BOOT) und AXP2101-Schienen ist geschrieben und kompiliert; die Doku-Seiten `schlafmodi.md` und `ble-energie.md` stehen. Alle Aufgaben, deren Prüfschritt das Gerät oder ein Messgerät verlangt, bleiben offen. Zu 1.2: Der Schaltplan zeigt `DCDC1` = `VCC3V3` (nicht abschaltbar), die Lastzuordnung der ALDO/BLDO-Ausgänge ist aus dem PDF nicht lesbar (Szenario *AXP2101-Schienen* klärt das).
+
 **Phase 1 (Datenblattwerte, ohne Messung):** Gruppe 1 (außer 1.3). **Phase 2 (später, mit Messgerät und Firmware):** 1.3 und Gruppen 2–5.
 
 ## 1. Grundlagen und Datenblattwerte
@@ -7,7 +9,7 @@
 - [x] 1.1 Datenblattwerte (ESP32-S3 Schlafmodi und Funk, AXP2101-Ruhestrom, CO5300, QMI8658, Codec) mit Quelle in `docs/stromverbrauch.md` erfassen; prüfen, dass jede Zahl einen Link hat
 - [ ] 1.2 Schaltplan auf nicht abschaltbare Verbraucher prüfen (PSRAM, Flash, Pull-ups, LDOs) und Ergebnis in der Doku festhalten
 - [ ] 1.3 Messaufbau beschreiben und aufbauen (Messgerät am Akku-Anschluss); Referenzmessung "Board aus/Leerlauf" liegt vor
-- [ ] 1.4 MkDocs-Seitengerüst und Navigation für `stromverbrauch`, `schlafmodi`, `ble-energie` anlegen; `mkdocs build --strict` läuft fehlerfrei
+- [x] 1.4 MkDocs-Seitengerüst und Navigation für `stromverbrauch`, `schlafmodi`, `ble-energie` anlegen; `mkdocs build --strict` läuft fehlerfrei
 
 ## 2. Schlafmodi in der Firmware
 
@@ -15,7 +17,7 @@
 - [ ] 2.2 Aufwachquellen Timer und Taste umsetzen, Aufwachgrund melden; per Test auf Gerät (10-s-Timer, Tastendruck) prüfen
 - [ ] 2.3 Wakeup per Touch- oder IMU-Interrupt umsetzen und auf Gerät prüfen
 - [ ] 2.4 RTC-Zähler über Deep Sleep hinweg; Wert steigt nach jedem Aufwachen
-- [ ] 2.5 Doku `docs/schlafmodi.md` mit Codeausschnitten, Wakeup-Tabelle und Stolpersteinen schreiben
+- [x] 2.5 Doku `docs/schlafmodi.md` mit Codeausschnitten, Wakeup-Tabelle und Stolpersteinen schreiben
 
 ## 3. Peripherie abschalten
 

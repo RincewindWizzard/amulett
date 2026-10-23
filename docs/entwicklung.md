@@ -17,10 +17,12 @@ sudo usermod -aG dialout $USER                     # danach neu einloggen
 ```sh
 cargo run --release                 # Produkt-Firmware: baut, flasht, öffnet die Konsole
 cargo run --release --features poc  # Hardware-PoC-Seiten statt Produkt
+cargo run --release --features power # Messprogramm für die Stromstudie
 ```
 
 Die Produkt-Firmware zeigt die Farbfläche, siehe [Farbanzeige](farbanzeige.md).
-Mit dem Cargo-Feature `poc` startet stattdessen das Test-Programm mit den
+Mit dem Cargo-Feature `power` startet ein Messprogramm mit Szenarien
+(Schlafmodi, BLE, Display), siehe [Schlafmodi](schlafmodi.md). Mit dem Cargo-Feature `poc` startet stattdessen das Test-Programm mit den
 Seiten Testbild, Energie, IMU, Audio, Funk und Info.
 
 ## Aufbau des Quellcodes

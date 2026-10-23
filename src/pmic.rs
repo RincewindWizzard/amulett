@@ -23,6 +23,49 @@ const REG_LDO_ONOFF0: u8 = 0x90;
 const REG_LDO_ONOFF1: u8 = 0x91;
 const REG_BAT_PERCENT: u8 = 0xA4;
 
+/// Switchable output rails of the AXP2101 (enable bits of registers 0x90 / 0x91).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Rail {
+    Aldo1,
+    Aldo2,
+    Aldo3,
+    Aldo4,
+    Bldo1,
+    Bldo2,
+    CpuSldo,
+    Dldo1,
+    Dldo2,
+}
+
+impl Rail {
+    pub const ALL: [Rail; 9] = [
+        Rail::Aldo1,
+        Rail::Aldo2,
+        Rail::Aldo3,
+        Rail::Aldo4,
+        Rail::Bldo1,
+        Rail::Bldo2,
+        Rail::CpuSldo,
+        Rail::Dldo1,
+        Rail::Dldo2,
+    ];
+
+    /// (register, bit)
+    fn control(self) -> (u8, u8) {
+        match self {
+            Rail::Aldo1 => (REG_LDO_ONOFF0, 0),
+            Rail::Aldo2 => (REG_LDO_ONOFF0, 1),
+            Rail::Aldo3 => (REG_LDO_ONOFF0, 2),
+            Rail::Aldo4 => (REG_LDO_ONOFF0, 3),
+            Rail::Bldo1 => (REG_LDO_ONOFF0, 4),
+            Rail::Bldo2 => (REG_LDO_ONOFF0, 5),
+            Rail::CpuSldo => (REG_LDO_ONOFF0, 6),
+            Rail::Dldo1 => (REG_LDO_ONOFF0, 7),
+            Rail::Dldo2 => (REG_LDO_ONOFF1, 0),
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ChargeState {
     Standby,
@@ -97,6 +140,19 @@ impl<I2C: I2c> Axp2101<I2C> {
     }
 
     // --8<-- [start:status]
+    pub fn rail_enabled(&mut self, rail: Rail) -> Result<bool, I2C::Error> {
+        let (reg, bit) = rail.control();
+        Ok(self.read(reg)? & (1 << bit) != 0)
+    }
+
+    /// Switches one output rail on or off. Which load hangs on which rail
+    /// is not documented by the vendor; see `docs/stromverbrauch.md`.
+    pub fn set_rail(&mut self, rail: Rail, on: bool) -> Result<(), I2C::Error> {
+        let (reg, bit) = rail.control();
+        let v = self.read(reg)?;
+        self.write(reg, if on { v | (1 << bit) } else { v & !(1 << bit) })
+    }
+
     pub fn status(&mut self) -> Result<Status, I2C::Error> {
         let s1 = self.read(REG_STATUS1)?;
         let s2 = self.read(REG_STATUS2)?;

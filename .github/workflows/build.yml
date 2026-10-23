@@ -35,6 +35,9 @@ jobs:
       - name: Build PoC firmware
         run: cargo build --release --locked --features poc
 
+      - name: Build power study firmware
+        run: cargo build --release --locked --features power
+
       - name: Build
         run: cargo build --release --locked
 

@@ -25,6 +25,7 @@ sudo usermod -aG dialout $USER             # Serial-Zugriff, danach neu einlogge
 ```sh
 cargo run --release                 # product firmware: builds, flashes, opens the serial monitor
 cargo run --release --features poc  # hardware proof-of-concept pages instead
+cargo run --release --features power # power study: one measurable state at a time
 ```
 
 Releases (Tag `v*`) enthalten ein fertiges Flash-Image `amulett-esp32s3.bin`:

@@ -2,6 +2,7 @@
 #![no_main]
 // The hardware PoC drivers are only used by the `poc` feature.
 #![cfg_attr(not(feature = "poc"), allow(dead_code))]
+#![allow(unreachable_code)]
 
 extern crate alloc;
 
@@ -11,11 +12,14 @@ mod display;
 #[allow(dead_code)]
 mod expander;
 mod imu;
+#[allow(dead_code)]
 mod input;
 mod pmic;
 #[cfg(feature = "poc")]
 mod poc;
-#[cfg(not(feature = "poc"))]
+#[cfg(feature = "power")]
+mod power_study;
+#[cfg(not(any(feature = "poc", feature = "power")))]
 mod product;
 #[allow(dead_code)]
 mod rtc;
@@ -36,6 +40,8 @@ fn main() -> ! {
 
     #[cfg(feature = "poc")]
     poc::run(peripherals);
-    #[cfg(not(feature = "poc"))]
+    #[cfg(feature = "power")]
+    power_study::run(peripherals);
+    #[cfg(not(any(feature = "poc", feature = "power")))]
     product::run(peripherals)
 }

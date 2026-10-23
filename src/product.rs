@@ -36,7 +36,7 @@ use crate::{
     audio::{self, AudioIo},
     display::{self, Co5300, Framebuffer},
     expander::Tca9554,
-    input::{Gesture, TouchEvent},
+    input::{Buttons, Bus, Gesture, TouchEvent},
     touch::{self, Cst9217},
     ui, wireless,
 };
@@ -48,8 +48,6 @@ const DEMO_BEACON_INTERVAL_MS: u32 = 200;
 const OVERLAY_INTERVAL_MS: u32 = 250;
 const REPORT_INTERVAL_MS: u32 = 1000;
 const BUTTON_POLL_MS: u32 = 30;
-
-type Bus<'a> = RefCellDevice<'a, I2c<'a, esp_hal::Blocking>>;
 
 fn now_ms() -> u32 {
     Instant::now().duration_since_epoch().as_millis() as u32
@@ -64,31 +62,6 @@ fn own_id() -> u32 {
 
 fn rgb565(raw: u16) -> Rgb565 {
     Rgb565::from(RawU16::new(raw))
-}
-
-/// Edge detection for the two side buttons.
-struct Buttons<'d> {
-    boot: Input<'d>,
-    boot_was_down: bool,
-    pwr_was_down: bool,
-}
-
-impl<'d> Buttons<'d> {
-    fn new(boot: Input<'d>) -> Self {
-        let boot_was_down = boot.is_low();
-        Self { boot, boot_was_down, pwr_was_down: true }
-    }
-
-    /// Returns (BOOT pressed, PWR pressed) since the last call.
-    fn poll(&mut self, expander: &mut Tca9554<Bus<'_>>) -> (bool, bool) {
-        let boot_down = self.boot.is_low();
-        let boot = boot_down && !self.boot_was_down;
-        self.boot_was_down = boot_down;
-        let pwr_down = expander.pwr_pressed().unwrap_or(false);
-        let pwr = pwr_down && !self.pwr_was_down;
-        self.pwr_was_down = pwr_down;
-        (boot, pwr)
-    }
 }
 
 // --8<-- [start:select]

@@ -40,5 +40,8 @@ nav:
       - Freunde erkennen: freunde-erkennen.md
       - Farbanzeige: farbanzeige.md
       - Fraktionen und Gefahr: fraktionen.md
-  - Stromverbrauch: stromverbrauch.md
+  - Strom:
+      - Stromverbrauch: stromverbrauch.md
+      - Schlafmodi und Messszenarien: schlafmodi.md
+      - BLE und Energie: ble-energie.md
   - Entwicklung: entwicklung.md

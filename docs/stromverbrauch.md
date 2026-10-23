@@ -141,8 +141,37 @@ Herstellerdoku keine Zahl.
   quantifizierbar. Der Schaltplan zeigt, welche Schienen der AXP2101
   abschalten kann.
 
+## Messaufbau
+
+Gemessen wird am Akku-Anschluss (MX1.25) ohne angeschlossenes USB-Kabel, weil
+Ladeelektronik und USB-Seite sonst mitmessen. Das Messgerät muss Mikroampere bis
+etwa 100 mA abdecken (z. B. Nordic PPK2, Otii oder ein INA226-Modul mit
+Mittelwertbildung). Das Messprogramm mit den Szenarien steht auf der Seite
+[Schlafmodi](schlafmodi.md#messprogramm); BLE-spezifische Fragen auf
+[BLE und Energie](ble-energie.md).
+
+## Messwerte
+
+**Noch nicht gemessen.** Diese Tabelle ist der Ort für eigene Messungen, getrennt von
+den Datenblattwerten oben. Bei jeder Zeile gehören Gerät, Firmware-Version,
+Akkuspannung und Umgebung dazu.
+
+| Szenario | Datenblatt (Chip) | Gemessen (Board) | Bemerkung |
+|---|---|---|---|
+| Display an, hell | – | *offen* | |
+| Display gedimmt | – | *offen* | |
+| Display aus, CPU läuft (240 MHz) | 32,9–47,6 mA (Modem-Sleep) | *offen* | |
+| BLE Advertising 100 ms | – | *offen* | |
+| BLE Advertising 1000 ms | – | *offen* | |
+| BLE Advertising 5000 ms | – | *offen* | |
+| Beacon + Scan | – | *offen* | |
+| Light Sleep | 240 µA + 140 µA PSRAM | *offen* | |
+| Deep Sleep | 7–8 µA | *offen* | |
+| Deep Sleep + BLE (60 s Zyklus) | – | *offen* | |
+| AXP2101 ausgeschaltet (nur Akku) | 40 µA | *offen* | |
+
 ## Offene Punkte
 
-- Schaltplan auswerten: Welche Bausteine hängen an welcher AXP2101-Schiene und sind abschaltbar?
+- Schaltplan: `DCDC1` = `VCC3V3` ist nicht abschaltbar; welche Last an ALDO1–4 und BLDO2 hängt, ist aus dem PDF nicht lesbar und wird mit dem Szenario *AXP2101-Schienen* gemessen (siehe [Schlafmodi](schlafmodi.md#schienen-des-axp2101)).
 - Datenblätter für CO5300, CST9217, ES7210 und TCA9554 beschaffen oder Herstellerangabe anfragen.
 - **Später**: Messungen am Akku-Anschluss (Deep-Sleep, Light-Sleep, BLE-Advertising, verbunden, Display an/aus) und Vergleich mit den hier genannten Datenblattwerten.
