@@ -3,6 +3,8 @@
 Rust (`no_std`, [esp-hal](https://github.com/esp-rs/esp-hal)) firmware for the
 Waveshare **ESP32-S3-Touch-AMOLED-1.75** (ESP32-S3R8, 8 MB PSRAM, 32 MB flash).
 
+📖 **Dokumentation:** <https://rincewindwizzard.github.io/amulett/>
+
 Onboard peripherals: CO5300 AMOLED (QSPI, 466×466), CST9217 touch (I2C),
 QMI8658 IMU, AXP2101 PMIC, audio codec + dual mic, PWR/BOOT buttons.
 

@@ -1,0 +1,29 @@
+site_name: amulett
+site_description: Rust-Firmware und Hardware-Doku für das Waveshare ESP32-S3-Touch-AMOLED-1.75
+site_url: https://rincewindwizzard.github.io/amulett/
+repo_url: https://github.com/RincewindWizzard/amulett
+docs_dir: docs
+strict: true
+
+theme:
+  name: material
+  language: de
+  features:
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+
+nav:
+  - Start: index.md
+  - Hardware: hardware.md
+  - Stromverbrauch: stromverbrauch.md

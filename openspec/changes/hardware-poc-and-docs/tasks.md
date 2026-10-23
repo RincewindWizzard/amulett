@@ -2,7 +2,7 @@
 
 ## 1. Hardware-Recherche und Projektstruktur
 
-- [ ] 1.1 Schaltplan und Waveshare-Wiki auswerten; Bausteine, Pins und Adressen in `docs/hardware.md` festhalten und prüfen, dass jede Zeile eine Quelle verlinkt
+- [x] 1.1 Schaltplan und Waveshare-Wiki auswerten; Bausteine, Pins und Adressen in `docs/hardware.md` festhalten und prüfen, dass jede Zeile eine Quelle verlinkt
 - [ ] 1.2 `src/` in Module je Peripherie aufteilen (`display`, `touch`, `buttons`, `imu`, `pmic`, `audio`, `wireless`) und prüfen, dass `cargo build --release` weiterhin läuft
 - [ ] 1.3 Abhängigkeiten hinzufügen (embedded-graphics, async-Runtime, Shared-I2C) und prüfen, dass der Build mit `--locked` nach Aktualisierung von `Cargo.lock` läuft
 
@@ -43,7 +43,7 @@
 
 ## 8. Dokumentationsseite und Veröffentlichung
 
-- [ ] 8.1 `mkdocs.yml` (Material, Deutsch, Navigation, Snippet-Includes aus `src/`) und `docs/index.md` anlegen; `mkdocs build --strict` läuft fehlerfrei
+- [x] 8.1 `mkdocs.yml` (Material, Deutsch, Navigation, Snippet-Includes aus `src/`) und `docs/index.md` anlegen; `mkdocs build --strict` läuft fehlerfrei
 - [ ] 8.2 `.github/workflows/docs.yml` für Build bei PR und Deploy auf GitHub Pages bei Push auf `main` anlegen; Workflow-Lauf ist grün und Seite erreichbar
 - [ ] 8.3 README mit Link auf die gehostete Doku-URL ergänzen und prüfen, dass der Link auflöst
 - [ ] 8.4 Gesamtprüfung: alle Herstellerlinks in der Doku erreichbar, CI-Build und Doku-Build grün
