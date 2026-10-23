@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: esp-rs/xtensa-toolchain@v1.6
+        with:
+          default: true
+          buildtargets: esp32s3
+          ldproxy: false
+          version: 1.95.0.0
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: espflash
+
+      - name: Build
+        run: cargo build --release --locked
+
+      - name: Create flash image
+        run: |
+          mkdir -p dist
+          espflash save-image --chip esp32s3 --flash-size 32mb --merge --skip-padding \
+            target/xtensa-esp32s3-none-elf/release/amulett dist/amulett-esp32s3.bin
+          cp target/xtensa-esp32s3-none-elf/release/amulett dist/amulett-esp32s3.elf
+          (cd dist && sha256sum * > SHA256SUMS)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: amulett-esp32s3
+          path: dist/
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: amulett-esp32s3
+          path: dist
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
