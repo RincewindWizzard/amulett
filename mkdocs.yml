@@ -6,11 +6,13 @@ docs_dir: docs
 strict: true
 
 theme:
-  name: material
-  language: de
-  features:
-    - navigation.sections
-    - content.code.copy
+  name: readthedocs
+  locale: de
+  highlightjs: true
+  hljs_languages:
+    - rust
+    - toml
+  navigation_depth: 3
 
 markdown_extensions:
   - admonition

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Legt fest, wie das Amulett Freunde und Feinde unterscheidet, welche Amulette in den Nähe-Wert eingehen und wann und wie es vor Feinden warnt.
+Legt fest, wie das Amulett Freunde und Feinde unterscheidet, welche Amulette in die Freundesmaße eingehen und wann und wie es vor Feinden warnt.
 
 ## ADDED Requirements
 
@@ -21,12 +21,12 @@ Das Amulett SHALL ein empfangenes Amulett als Freund einstufen, wenn dessen Frak
 - **WHEN** ein Beacon mit unbekanntem Fraktionswert empfangen wird
 - **THEN** wird er weder als Freund noch als Feind gezählt
 
-### Requirement: Nähe-Wert zählt nur Freunde
-Das Amulett SHALL bei der Berechnung des Nähe-Werts und der Animation ausschließlich Freunde berücksichtigen.
+### Requirement: Freundesmaße zählen nur Freunde
+Das Amulett SHALL bei der Berechnung der Freundesmaße und der Farbfläche ausschließlich Freunde berücksichtigen.
 
 #### Scenario: Nur Feinde in der Nähe
 - **WHEN** nur Feinde, aber keine Freunde empfangen werden
-- **THEN** bleibt der Nähe-Wert 0 und die Animation steht auf dem ersten Frame
+- **THEN** bleiben die Freundesmaße 0 und die Fläche bleibt grau und dunkel
 
 ### Requirement: Gefahr bei Feind in der Nähe
 Das Amulett SHALL eine Gefahrenanzeige starten, wenn die geglättete Nähe eines Feindes den Einschaltwert erreicht.
@@ -47,7 +47,7 @@ Das Amulett SHALL bei Gefahr den Bildschirm rot und pulsierend mit dem Text "GEF
 - **THEN** pulsiert die Anzeige schneller als zuvor
 
 ### Requirement: Gefahr hat Vorrang
-Das Amulett SHALL die Gefahrenanzeige über der Animation darstellen und die Animation bei Gefahr nicht darunter zeichnen lassen.
+Das Amulett SHALL die Gefahrenanzeige über der Farbfläche darstellen.
 
 #### Scenario: Gleichzeitig Freund und Feind
 - **WHEN** ein Freund und ein Feind in der Nähe sind
@@ -58,7 +58,7 @@ Das Amulett SHALL die Gefahrenanzeige erst beenden, wenn die geglättete Nähe a
 
 #### Scenario: Feind geht weg
 - **WHEN** nach der Ablaufzeit kein Beacon des Feindes mehr eintrifft
-- **THEN** endet die Gefahrenanzeige und die Animation wird wieder angezeigt
+- **THEN** endet die Gefahrenanzeige und die Farbfläche wird wieder angezeigt
 
 #### Scenario: Schwankendes Signal
 - **WHEN** die Nähe eines Feindes knapp um den Einschaltwert schwankt

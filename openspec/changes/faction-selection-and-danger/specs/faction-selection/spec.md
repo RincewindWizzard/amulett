@@ -36,10 +36,10 @@ Das Amulett SHALL jede Fraktion durch Buchstabe und Farbe darstellen, wobei die 
 - **THEN** sind A und B jeweils mit Buchstabe und eigener Farbe dargestellt und die markierte Fraktion ist hervorgehoben
 
 ### Requirement: Eigene Fraktion im Normalbetrieb sichtbar
-Das Amulett SHALL im Normalbetrieb die eigene Fraktion dauerhaft am Bildschirm erkennbar machen, ohne die Animation zu verdecken.
+Das Amulett SHALL im Normalbetrieb die eigene Fraktion dauerhaft am Bildschirm erkennbar machen, ohne die Farbfläche zu verdecken.
 
-#### Scenario: Anzeige während der Animation
-- **WHEN** die Animation läuft
+#### Scenario: Anzeige im Normalbetrieb
+- **WHEN** die Farbfläche angezeigt wird
 - **THEN** ist ein Fraktionszeichen (Buchstabe in Fraktionsfarbe) am Rand des Displays sichtbar
 
 ### Requirement: Fraktion im Beacon

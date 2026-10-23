@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Legt fest, wie ein Amulett andere Amulette in der Nähe per BLE erkennt und daraus einen Wert bildet, der beschreibt, wie viele Freunde wie nah sind.
+Legt fest, wie ein Amulett andere Amulette in der Nähe per BLE erkennt und daraus Werte bildet, die beschreiben, wie viele Freunde wie nah sind.
 
 ## ADDED Requirements
 
@@ -26,47 +26,47 @@ Das Amulett SHALL gleichzeitig zum Senden nach Beacons anderer Amulette scannen 
 
 #### Scenario: Fremde BLE-Geräte
 - **WHEN** Beacons ohne Amulett-Kennzeichnung empfangen werden
-- **THEN** werden sie ignoriert und beeinflussen den Nähe-Wert nicht
+- **THEN** werden sie ignoriert und beeinflussen die Freundesmaße nicht
 
 ### Requirement: Eigene Beacons werden ignoriert
 Das Amulett SHALL Beacons mit der eigenen Geräte-Kennung nicht als Freund zählen.
 
 #### Scenario: Eigenes Echo
 - **WHEN** ein Beacon mit der eigenen Kennung empfangen wird
-- **THEN** zählt er nicht für den Nähe-Wert
+- **THEN** zählt er nicht für die Freundesmaße
 
 ### Requirement: Freunde laufen ab
 Das Amulett SHALL einen Freund aus der Liste entfernen, wenn von ihm länger als eine konfigurierbare Zeitspanne kein Beacon empfangen wurde.
 
 #### Scenario: Freund geht weg
 - **WHEN** ein Freund nach der Ablaufzeit keinen Beacon mehr gesendet hat
-- **THEN** wird er nicht mehr gezählt und sein Anteil am Nähe-Wert entfällt
+- **THEN** wird er nicht mehr gezählt und sein Anteil an den Freundesmaßen entfällt
 
 ### Requirement: Signalstärke wird geglättet
-Das Amulett SHALL die RSSI-Werte je Freund glätten, damit einzelne Ausreißer den Nähe-Wert nicht sprunghaft verändern.
+Das Amulett SHALL die RSSI-Werte je Freund glätten, damit einzelne Ausreißer die Freundesmaße nicht sprunghaft verändern.
 
 #### Scenario: Ausreißer
 - **WHEN** ein einzelner Beacon eines nahen Freundes mit stark abweichender RSSI empfangen wird
-- **THEN** ändert sich der Nähe-Wert nur geringfügig
+- **THEN** ändern sich die Freundesmaße nur geringfügig
 
-### Requirement: Nähe-Wert
-Das Amulett SHALL einen Nähe-Wert zwischen 0 und 1 berechnen, der mit der Anzahl der erkannten Freunde und mit deren Nähe monoton steigt.
+### Requirement: Freundesmaße
+Das Amulett SHALL aus den erkannten Freunden zwei Werte berechnen: die gewichtete Freundesanzahl (Summe der Nähe aller Freunde) und die Nähe des nächsten Freundes (größte Nähe eines Freundes), wobei die Nähe je Freund zwischen 0 und 1 liegt.
 
 #### Scenario: Kein Freund
 - **WHEN** kein Freund erkannt wird
-- **THEN** ist der Nähe-Wert 0
+- **THEN** sind gewichtete Anzahl und Nähe des nächsten Freundes 0
 
 #### Scenario: Mehr Freunde
 - **WHEN** zu einem erkannten Freund ein weiterer mit gleicher Signalstärke hinzukommt
-- **THEN** ist der Nähe-Wert höher als zuvor
+- **THEN** ist die gewichtete Anzahl größer als zuvor
 
 #### Scenario: Näherer Freund
 - **WHEN** sich ein Freund annähert (RSSI steigt)
-- **THEN** steigt der Nähe-Wert
+- **THEN** steigt seine Nähe und damit die Nähe des nächsten Freundes
 
-#### Scenario: Obergrenze
-- **WHEN** viele Freunde sehr nah sind
-- **THEN** überschreitet der Nähe-Wert 1 nicht
+#### Scenario: Wertebereich
+- **WHEN** beliebig viele Freunde sehr nah sind
+- **THEN** bleibt die Nähe je Freund und die Nähe des nächsten Freundes höchstens 1
 
 ### Requirement: Parameter sind konfigurierbar
 Das Amulett SHALL Advertising-Intervall, Scan-Fenster, Ablaufzeit, Glättung und die RSSI-Schwellen für "nah" und "fern" als Konstanten an einer Stelle bündeln.
