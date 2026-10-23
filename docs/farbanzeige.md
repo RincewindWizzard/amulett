@@ -1,8 +1,8 @@
 # Farbanzeige
 
 Solange es keine Animation gibt, zeigt das Display die Freundesmenge als Farbe.
-Die ganze Displayfläche hat eine Farbe mit festem Farbton (Startwert 210°,
-Blau). Zwei Eigenschaften der Farbe tragen die Information:
+Die ganze Displayfläche hat eine Farbe, deren Farbton die gewählte
+[Fraktion](fraktionen.md) vorgibt (A: 210°, Blau; B: 30°, Orange). Zwei Eigenschaften der Farbe tragen die Information:
 
 | Eigenschaft | Folgt | Bedeutung |
 |---|---|---|
@@ -36,8 +36,9 @@ einfarbige Fläche wird ohne Framebuffer direkt an das Display gesendet
 |---|---|
 | BOOT-Taste | Debug-Übersicht ein-/ausblenden (Freunde, Kennung, RSSI, Beacon-Rate, `n_eff`, `c_max`, Sättigung und Helligkeit mit Zielwert) |
 | PWR-Taste (kurz) | Demo-Modus ein/aus |
-| Tippen (nur Demo) | virtuellen Freund hinzufügen (bis zu 6, unterschiedliche Nähe) |
-| Langes Drücken (nur Demo) | alle virtuellen Freunde entfernen |
+| Tippen obere Hälfte (nur Demo) | virtuellen Freund hinzufügen (bis zu 6, unterschiedliche Nähe) |
+| Tippen untere Hälfte (nur Demo) | virtuellen Feind schalten: keiner → fern → mittel → nah |
+| Langes Drücken (nur Demo) | alle virtuellen Freunde und Feinde entfernen |
 
 Der **Demo-Modus** speist virtuelle Freunde in dieselbe Tabelle ein wie echte
 Beacons. So lässt sich die Anzeige mit nur einem Gerät prüfen.
@@ -56,7 +57,7 @@ Alle Werte in `crates/amulett-core/src/params.rs` (siehe
 
 | Parameter | Startwert |
 |---|---:|
-| `HUE_DEG` | 210 |
+| `HUE_A_DEG` / `HUE_B_DEG` | 210 / 30 |
 | `FULL_SATURATION_COUNT` | 4,0 |
 | `V_MIN` / `V_MAX` | 0,08 / 1,0 |
 | `RISE_PER_S` / `FALL_PER_S` | 0,5 / 0,25 |

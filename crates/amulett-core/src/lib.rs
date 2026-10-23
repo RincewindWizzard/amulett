@@ -7,6 +7,8 @@
 
 pub mod beacon;
 pub mod color;
+pub mod danger;
+pub mod faction;
 pub mod friends;
 pub mod hci;
 pub mod params;

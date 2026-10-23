@@ -19,7 +19,7 @@ Quellcode: [github.com/RincewindWizzard/amulett](https://github.com/RincewindWiz
 
 Die Firmware zeigt die **Anwesenheit von Freunden als Farbe**: Sättigung =
 wie viele, Helligkeit = wie nah. Siehe [Freunde erkennen](freunde-erkennen.md)
-und [Farbanzeige](farbanzeige.md).
+[Farbanzeige](farbanzeige.md) und [Fraktionen und Gefahr](fraktionen.md).
 
 Mit `cargo run --release --features poc` startet stattdessen das
 Hardware-Testprogramm mit sechs Seiten (Testbild + Touch, Energie, IMU, Audio,

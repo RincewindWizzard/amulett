@@ -12,16 +12,17 @@ es kennzeichnet nur das Amulett.
 
 | Offset | Größe | Inhalt |
 |---:|---:|---|
-| 0 | 1 | Länge (10) |
+| 0 | 1 | Länge (12) |
 | 1 | 1 | AD-Typ `0xFF` |
 | 2 | 2 | Company-ID `0xFFFF` (für Tests reserviert), little-endian |
 | 4 | 2 | Kennung `"AM"` |
-| 6 | 1 | Format-Version (1) |
+| 6 | 1 | Format-Version (2) |
 | 7 | 4 | Geräte-Kennung (untere vier Bytes der MAC-Adresse), little-endian |
-| 11 | 1 | Zähler, steigt jede Sekunde |
+| 11 | 1 | Flags: Bits 0–3 Fraktions-ID (0 = A, 1 = B), übrige Bits reserviert |
+| 12 | 1 | Zähler, steigt jede Sekunde |
 
 Davor steht die übliche Flags-Struktur (`02 01 06`). Beacons mit anderer
-Company-ID, Kennung oder Version werden verworfen.
+Company-ID, Kennung oder Version (auch das alte Format 1) werden verworfen.
 
 ```rust
 --8<-- "crates/amulett-core/src/beacon.rs:decode"
@@ -46,7 +47,8 @@ abgedeckt.
 
 ## Freundestabelle
 
-Pro Geräte-Kennung (bis zu 16) speichert das Amulett den geglätteten RSSI
+Pro Geräte-Kennung (bis zu 16) speichert die Tabelle zusätzlich, ob es ein Freund oder
+ein Feind ist ([Fraktionen](fraktionen.md)). Sie speichert das Amulett den geglätteten RSSI
 (exponentieller Mittelwert), den Zeitpunkt des letzten Beacons und die
 Beacon-Rate. Nach 10 s ohne Beacon läuft ein Eintrag ab. Beacons mit der
 eigenen Kennung werden ignoriert.

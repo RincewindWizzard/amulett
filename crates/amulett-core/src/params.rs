@@ -28,8 +28,9 @@ pub const MAX_FRIENDS: usize = 16;
 
 // --- Colour display ------------------------------------------------------------
 
-/// Hue of the colour area (degrees); later set by the faction.
-pub const HUE_DEG: u16 = 210;
+/// Hue of the colour area per faction (degrees): A blue, B orange. Red is reserved for danger.
+pub const HUE_A_DEG: u16 = 210;
+pub const HUE_B_DEG: u16 = 30;
 /// Weighted friend count at which the colour reaches full saturation.
 pub const FULL_SATURATION_COUNT: f32 = 4.0;
 /// Brightness without friends and with the nearest friend right next to us (0..1).
@@ -40,3 +41,19 @@ pub const RISE_PER_S: f32 = 0.5;
 pub const FALL_PER_S: f32 = 0.25;
 /// Interval of the display update loop.
 pub const DISPLAY_INTERVAL_MS: u32 = 50;
+
+// --- Factions and danger -----------------------------------------------------------
+
+/// Two beacons of an enemy within this time confirm it (a single beacon is ignored).
+pub const CONFIRM_WINDOW_MS: u32 = 3_000;
+/// Danger starts when the closeness of the nearest confirmed enemy reaches this value ...
+pub const DANGER_ON: f32 = 0.45;
+/// ... and ends when it falls below this value (hysteresis, must be smaller than `DANGER_ON`).
+pub const DANGER_OFF: f32 = 0.30;
+/// Pulse period of the danger display at `DANGER_ON` and at closeness 1.
+pub const PULSE_SLOW_MS: u32 = 1_200;
+pub const PULSE_FAST_MS: u32 = 300;
+/// Lowest brightness of the pulse (0..1).
+pub const PULSE_MIN: f32 = 0.35;
+/// Play a warning tone while in danger (needs the audio hardware to be initialised).
+pub const WARN_TONE: bool = false;

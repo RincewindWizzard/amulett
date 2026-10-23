@@ -153,9 +153,9 @@ impl<'d> Radio<'d> {
     }
 
     // --8<-- [start:radio_start]
-    pub fn start(bt: BT<'d>, own_id: u32) -> Result<Self, BleError> {
+    pub fn start(bt: BT<'d>, own_id: u32, faction: u8) -> Result<Self, BleError> {
         let mut ble = BleConnector::new(bt, Default::default()).map_err(|_| BleError::Init)?;
-        let beacon = Beacon { id: own_id, counter: 0 };
+        let beacon = Beacon { id: own_id, counter: 0, faction };
         hci_command(&mut ble, OP_RESET, &[])?;
         // Enable the LE Meta event (bit 61), which carries the advertising reports.
         hci_command(&mut ble, OP_SET_EVENT_MASK, &[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x1F, 0x00, 0x20])?;

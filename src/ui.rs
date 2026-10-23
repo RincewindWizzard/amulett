@@ -68,3 +68,8 @@ pub fn overlay(fb: &mut Framebuffer, y0: i32, color: Rgb565, lines: &[String]) {
         y += LINE_HEIGHT;
     }
 }
+
+/// Draws one line of text centered on the given x position; `y` is the baseline.
+pub fn centered_at(fb: &mut Framebuffer, x: i32, y: i32, color: Rgb565, text: &str) {
+    let _ = Text::with_alignment(text, Point::new(x, y), text_style(color), Alignment::Center).draw(fb);
+}

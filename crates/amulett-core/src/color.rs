@@ -77,7 +77,7 @@ mod tests {
     }
 
     fn m(n_eff: f32, c_max: f32) -> Measures {
-        Measures { n_eff, c_max, count: 0 }
+        Measures { n_eff, c_max, ..Measures::default() }
     }
 
     #[test]
@@ -171,8 +171,8 @@ mod tests {
         for _ in 0..200 {
             c.step(&m(2.0, 0.5), DISPLAY_INTERVAL_MS);
         }
-        let first = c.rgb565(HUE_DEG);
+        let first = c.rgb565(210);
         c.step(&m(2.0, 0.5), DISPLAY_INTERVAL_MS);
-        assert_eq!(first, c.rgb565(HUE_DEG));
+        assert_eq!(first, c.rgb565(210));
     }
 }

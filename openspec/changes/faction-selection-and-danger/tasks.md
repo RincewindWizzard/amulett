@@ -2,13 +2,15 @@
 
 > Voraussetzung: `friend-proximity-color` ist umgesetzt (Beacon, Scanner, Freundestabelle, Freundesmaße, Farbanzeige, `amulett-core`).
 
+> **Stand der Umsetzung:** Kernlogik (Gruppe 1) mit 47 Unit-Tests, Auswahlbildschirm, Gefahrenanzeige, Demo-Modus mit Feind, optionaler Warnton und Doku sind umgesetzt und kompilieren. Offen bleiben die Aufgaben, deren Prüfschritt ein oder mehrere Geräte braucht, und der CI-Lauf (4.3).
+
 ## 1. Kernlogik (`crates/amulett-core`)
 
-- [ ] 1.1 Fraktions-Typ (A, B, unbekannt) und `relation(own, other)`; Unit-Tests: gleiche Fraktion = Freund, verschiedene = Feind, unbekannt = ignoriert
-- [ ] 1.2 Beacon-Format Version 2 mit `flags`-Byte (Fraktion in Bits 0–3) kodieren und dekodieren; Unit-Tests für Rundlauf, unbekannte Fraktion und Verwerfen von Version 1
-- [ ] 1.3 Freundestabelle um Beziehung je Eintrag erweitern; Freundesmaße zählen nur Freunde (Unit-Test: nur Feinde ergibt 0) und Gefährdung `g` aus den Feinden (Unit-Test: nächster Feind bestimmt `g`)
-- [ ] 1.4 Gefahrenautomat mit `G_EIN`, `G_AUS`, Ablaufzeit und Mindestanzahl Beacons; Unit-Tests für Auslösen, Schwanken um die Schwelle (kein Flackern), Ende durch Ablauf und eigene Kennung wird ignoriert
-- [ ] 1.5 Parameter (Schwellen, Pulsperioden, Fraktionsfarben, Warnton ein/aus) an der zentralen Stelle ergänzen und prüfen, dass es keine Duplikate gibt
+- [x] 1.1 Fraktions-Typ (A, B, unbekannt) und `relation(own, other)`; Unit-Tests: gleiche Fraktion = Freund, verschiedene = Feind, unbekannt = ignoriert
+- [x] 1.2 Beacon-Format Version 2 mit `flags`-Byte (Fraktion in Bits 0–3) kodieren und dekodieren; Unit-Tests für Rundlauf, unbekannte Fraktion und Verwerfen von Version 1
+- [x] 1.3 Freundestabelle um Beziehung je Eintrag erweitern; Freundesmaße zählen nur Freunde (Unit-Test: nur Feinde ergibt 0) und Gefährdung `g` aus den Feinden (Unit-Test: nächster Feind bestimmt `g`)
+- [x] 1.4 Gefahrenautomat mit `G_EIN`, `G_AUS`, Ablaufzeit und Mindestanzahl Beacons; Unit-Tests für Auslösen, Schwanken um die Schwelle (kein Flackern), Ende durch Ablauf und eigene Kennung wird ignoriert
+- [x] 1.5 Parameter (Schwellen, Pulsperioden, Fraktionsfarben, Warnton ein/aus) an der zentralen Stelle ergänzen und prüfen, dass es keine Duplikate gibt
 
 ## 2. Auswahl und Anzeige
 
@@ -27,8 +29,8 @@
 
 ## 4. Doku und Abschluss
 
-- [ ] 4.1 Seite `docs/fraktionen.md`: Spielregel, Bedienung, Beacon-Format Version 2, Gefahr-Parameter, Grenzen (Fälschbarkeit, Latenz, RSSI); `mkdocs build --strict` läuft fehlerfrei
-- [ ] 4.2 Bedienungsabschnitt in `docs/index.md` und README um Fraktionswahl ergänzen
+- [x] 4.1 Seite `docs/fraktionen.md`: Spielregel, Bedienung, Beacon-Format Version 2, Gefahr-Parameter, Grenzen (Fälschbarkeit, Latenz, RSSI); `mkdocs build --strict` läuft fehlerfrei
+- [x] 4.2 Bedienungsabschnitt in `docs/index.md` und README um Fraktionswahl ergänzen
 - [ ] 4.3 CI: Host-Tests (`amulett-core`) laufen mit den neuen Tests grün
 
 ## Workflow follow-up

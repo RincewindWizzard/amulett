@@ -30,6 +30,10 @@ cargo run --release --features poc  # hardware proof-of-concept pages instead
 Releases (Tag `v*`) enthalten ein fertiges Flash-Image `amulett-esp32s3.bin`:
 `espflash write-bin 0x0 amulett-esp32s3.bin`.
 
+After switching on, choose a faction with the buttons (BOOT switches between A and B,
+a short press on PWR confirms). Amulets of the same faction are friends, the other
+faction is the enemy and triggers a red danger display.
+
 The product firmware shows the presence of friends as a colour: every amulet
 sends a BLE beacon and scans for the others; saturation shows how many friends
 are around, brightness how close the nearest one is. The `poc` feature builds
