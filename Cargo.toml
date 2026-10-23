@@ -10,6 +10,10 @@ esp-bootloader-esp-idf = { version = "0.6.0", features = ["esp32s3"] }
 esp-backtrace = { version = "0.20.0", features = ["esp32s3", "panic-handler", "println"] }
 esp-println = { version = "0.18.0", features = ["esp32s3", "log-04"] }
 log = "0.4"
+esp-alloc = { version = "0.11.0", features = ["esp32s3"] }
+embedded-hal = "1.0.0"
+embedded-hal-bus = "0.3.0"
+embedded-graphics = "0.8.2"
 
 [profile.dev]
 # Rust debug builds are too slow for the ESP32

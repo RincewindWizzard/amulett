@@ -34,7 +34,7 @@ jobs:
       - name: Create flash image
         run: |
           mkdir -p dist
-          espflash save-image --chip esp32s3 --flash-size 32mb --merge --skip-padding \
+          espflash save-image --chip esp32s3 --flash-size 16mb --merge --skip-padding \
             target/xtensa-esp32s3-none-elf/release/amulett dist/amulett-esp32s3.bin
           cp target/xtensa-esp32s3-none-elf/release/amulett dist/amulett-esp32s3.elf
           (cd dist && sha256sum * > SHA256SUMS)

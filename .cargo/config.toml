@@ -3,10 +3,10 @@ target = "xtensa-esp32s3-none-elf"
 rustflags = ["-C", "link-arg=-Tlinkall.x"]
 
 [target.xtensa-esp32s3-none-elf]
-runner = "espflash flash --monitor --flash-size 32mb"
+runner = "espflash flash --monitor --flash-size 16mb"
 
 [env]
 ESP_LOG = "info"
 
 [unstable]
-build-std = ["core"]
+build-std = ["core", "alloc"]
