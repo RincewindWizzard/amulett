@@ -1,8 +1,8 @@
 [build]
 target = "xtensa-esp32s3-none-elf"
-rustflags = ["-C", "link-arg=-Tlinkall.x"]
 
 [target.xtensa-esp32s3-none-elf]
+rustflags = ["-C", "link-arg=-Tlinkall.x"]
 runner = "espflash flash --monitor --flash-size 16mb"
 
 [env]

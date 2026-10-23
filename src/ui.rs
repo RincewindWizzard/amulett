@@ -58,3 +58,13 @@ pub fn bar(fb: &mut Framebuffer, y: i32, width: u32, value: f32, color: Rgb565) 
             .draw(fb);
     }
 }
+
+/// Draws lines of text on top of the existing frame (no clearing), starting
+/// at the first baseline `y0`.
+pub fn overlay(fb: &mut Framebuffer, y0: i32, color: Rgb565, lines: &[String]) {
+    let mut y = y0;
+    for line in lines {
+        centered(fb, y, color, line);
+        y += LINE_HEIGHT;
+    }
+}

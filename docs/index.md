@@ -10,14 +10,20 @@ dokumentiert, damit klar ist, was möglich ist.
   [Energie](energie.md), [Display](display.md), [Touch und Tasten](eingabe.md),
   [Bewegungssensor](imu.md), [Audio](audio.md), [Funk](funk.md),
   [Weitere Bausteine](weitere-bausteine.md)
+- [Freunde erkennen](freunde-erkennen.md) und [Farbanzeige](farbanzeige.md): die Produktfunktion
 - [Stromverbrauch](stromverbrauch.md): Datenblattwerte (noch ohne eigene Messung)
 
 Quellcode: [github.com/RincewindWizzard/amulett](https://github.com/RincewindWizzard/amulett)
 
-## Bedienung der Demo
+## Produkt und Hardware-PoC
 
-Die Firmware zeigt sechs Seiten auf dem Display:
-Testbild + Touch, Energie, IMU, Audio, Funk und Info.
+Die Firmware zeigt die **Anwesenheit von Freunden als Farbe**: Sättigung =
+wie viele, Helligkeit = wie nah. Siehe [Freunde erkennen](freunde-erkennen.md)
+und [Farbanzeige](farbanzeige.md).
+
+Mit `cargo run --release --features poc` startet stattdessen das
+Hardware-Testprogramm mit sechs Seiten (Testbild + Touch, Energie, IMU, Audio,
+Funk, Info):
 
 | Eingabe | Wirkung |
 |---|---|
@@ -27,8 +33,8 @@ Testbild + Touch, Energie, IMU, Audio, Funk und Info.
 | Tippen auf *Audio* | Testton ein/aus (Mikrofonpegel laufen immer) |
 | Tippen auf *Funk* | WLAN-Scan (BLE-Advertising läuft beim Betreten der Seite) |
 
-Alle Ereignisse erscheinen zusätzlich auf der seriellen Konsole.
-Bauen und Flashen siehe [README](https://github.com/RincewindWizzard/amulett#readme).
+Alle Ereignisse erscheinen zusätzlich auf der seriellen Konsole. Bauen,
+Flashen und Tests: [Entwicklung](entwicklung.md).
 
 ## Offizielle Herstellerunterlagen
 

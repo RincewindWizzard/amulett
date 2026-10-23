@@ -23,15 +23,18 @@ sudo usermod -aG dialout $USER             # Serial-Zugriff, danach neu einlogge
 ## Run
 
 ```sh
-cargo run --release   # builds, flashes and opens the serial monitor
+cargo run --release                 # product firmware: builds, flashes, opens the serial monitor
+cargo run --release --features poc  # hardware proof-of-concept pages instead
 ```
 
 Releases (Tag `v*`) enthalten ein fertiges Flash-Image `amulett-esp32s3.bin`:
 `espflash write-bin 0x0 amulett-esp32s3.bin`.
 
-The current firmware only boots and scans the shared I2C bus, which is a quick
-check that the PMIC, touch controller and IMU are reachable. Next steps:
-AXP2101 power rails, CO5300 init over QSPI, CST9217 touch.
+The product firmware shows the presence of friends as a colour: every amulet
+sends a BLE beacon and scans for the others; saturation shows how many friends
+are around, brightness how close the nearest one is. The `poc` feature builds
+the hardware test pages (display, touch, power, IMU, audio, radio) instead.
+Details are in the documentation linked above.
 
-Note: GPIO numbers in `src/main.rs` come from the vendor documentation and
-should be verified against your board revision.
+Run the unit tests of the hardware independent logic on the development
+machine with `cd crates/amulett-core && cargo test --target x86_64-unknown-linux-gnu`.

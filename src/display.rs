@@ -121,6 +121,28 @@ impl<'d> Co5300<'d> {
     }
 
     // --8<-- [start:blit]
+    /// Fills the whole panel with one RGB565 colour without needing a framebuffer.
+    pub fn fill(&mut self, color: u16) -> Result<(), SpiError> {
+        self.set_window(0, 0, WIDTH - 1, HEIGHT - 1)?;
+        let mut chunk = [0u8; CHUNK_BYTES];
+        for px in chunk.chunks_exact_mut(2) {
+            px.copy_from_slice(&color.to_be_bytes());
+        }
+        let mut remaining = WIDTH as usize * HEIGHT as usize * 2;
+        while remaining > 0 {
+            let n = remaining.min(CHUNK_BYTES);
+            self.spi.half_duplex_write(
+                DataMode::Quad,
+                Command::_8Bit(0x32, DataMode::Single),
+                Address::_24Bit(0x003C00, DataMode::Single),
+                0,
+                &chunk[..n],
+            )?;
+            remaining -= n;
+        }
+        Ok(())
+    }
+
     /// Writes big-endian RGB565 pixel bytes into the given window.
     pub fn blit(&mut self, x: u16, y: u16, w: u16, h: u16, bytes: &[u8]) -> Result<(), SpiError> {
         self.set_window(x, y, x + w - 1, y + h - 1)?;
@@ -153,6 +175,11 @@ impl Framebuffer {
         Self {
             pixels: alloc::vec![0u16; n].into_boxed_slice(),
         }
+    }
+
+    /// Fills the buffer with one RGB565 colour (much faster than `clear`).
+    pub fn fill_raw(&mut self, color: u16) {
+        self.pixels.fill(color.to_be());
     }
 
     pub fn flush(&self, panel: &mut Co5300<'_>) -> Result<(), SpiError> {

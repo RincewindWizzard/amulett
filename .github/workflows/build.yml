@@ -28,6 +28,13 @@ jobs:
         with:
           tool: espflash
 
+      - name: Host tests (amulett-core)
+        run: cargo test --target x86_64-unknown-linux-gnu
+        working-directory: crates/amulett-core
+
+      - name: Build PoC firmware
+        run: cargo build --release --locked --features poc
+
       - name: Build
         run: cargo build --release --locked
 

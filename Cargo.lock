@@ -21,6 +21,7 @@ checksum = "c583acf993cf4245c4acb0a2cc2ab1f9cc097de73411bb6d3647ff6af2b1013d"
 name = "amulett"
 version = "0.1.0"
 dependencies = [
+ "amulett-core",
  "embassy-futures",
  "embedded-graphics",
  "embedded-hal 1.0.0",
@@ -34,6 +35,10 @@ dependencies = [
  "esp-rtos",
  "log",
 ]
+
+[[package]]
+name = "amulett-core"
+version = "0.1.0"
 
 [[package]]
 name = "as-slice"

@@ -1,0 +1,9 @@
+[package]
+name = "amulett-core"
+version = "0.1.0"
+edition = "2021"
+description = "Hardware-independent logic of the amulett firmware (friends, proximity, colour)"
+
+[dependencies]
+
+[workspace]

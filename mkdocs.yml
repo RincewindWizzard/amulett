@@ -36,4 +36,8 @@ nav:
       - Audio (ES8311, ES7210): audio.md
       - Funk (WLAN, BLE): funk.md
       - Weitere Bausteine: weitere-bausteine.md
+  - Freunde und Farbe:
+      - Freunde erkennen: freunde-erkennen.md
+      - Farbanzeige: farbanzeige.md
   - Stromverbrauch: stromverbrauch.md
+  - Entwicklung: entwicklung.md
