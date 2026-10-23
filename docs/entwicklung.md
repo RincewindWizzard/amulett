@@ -52,7 +52,7 @@ cargo test --target x86_64-unknown-linux-gnu
 ## Dokumentation lokal bauen
 
 ```sh
-pip install mkdocs
+pip install -r docs/requirements.txt
 mkdocs serve          # http://127.0.0.1:8000
 mkdocs build --strict # wie in der CI
 ```
