@@ -1,7 +1,7 @@
 # amulett
 
 Rust (`no_std`, [esp-hal](https://github.com/esp-rs/esp-hal)) firmware for the
-Waveshare **ESP32-S3-Touch-AMOLED-1.75** (ESP32-S3R8, 8 MB PSRAM, 32 MB flash).
+Waveshare **ESP32-S3-Touch-AMOLED-1.75** (ESP32-S3R8, 8 MB PSRAM, 16 MB flash).
 
 📖 **Dokumentation:** <https://rincewindwizzard.github.io/amulett/>
 

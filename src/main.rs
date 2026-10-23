@@ -3,6 +3,7 @@
 
 extern crate alloc;
 
+mod audio;
 #[allow(dead_code)]
 mod display;
 #[allow(dead_code)]
@@ -28,9 +29,10 @@ use esp_backtrace as _;
 use esp_hal::{
     clock::CpuClock,
     delay::Delay,
-    dma_rx_buffer, dma_tx_buffer,
+    dma_loop_buffer, dma_rx_buffer, dma_rx_stream_buffer, dma_tx_buffer,
     gpio::{Input, InputConfig, Level, Output, OutputConfig, Pull},
     i2c::master::{Config as I2cConfig, I2c},
+    i2s::master::{Channels, DataFormat, I2s, TdmConfig},
     main,
     spi::{
         master::{Config as SpiConfig, Spi},
@@ -42,7 +44,14 @@ use esp_println::println;
 
 esp_bootloader_esp_idf::esp_app_desc!();
 
-const PAGE_TITLES: [&str; 4] = ["Testbild + Touch", "Energie (AXP2101)", "IMU (QMI8658)", "Info + I2C"];
+const PAGE_TITLES: [&str; 5] = [
+    "Testbild + Touch",
+    "Energie (AXP2101)",
+    "IMU (QMI8658)",
+    "Audio (ES8311/ES7210)",
+    "Info + I2C",
+];
+const PAGE_AUDIO: usize = 3;
 const FRAME_MS: u32 = 30;
 const SWIPE_MIN_DX: i32 = 100;
 const SWIPE_MAX_DY: i32 = 120;
@@ -179,6 +188,50 @@ fn main() -> ! {
         println!("QMI8658 init failed: {e:?}");
     }
 
+    // Audio: configure both codecs over I2C, then run I2S with MCLK on GPIO42.
+    let mut codec = audio::es8311::Es8311::new(RefCellDevice::new(&bus));
+    match codec.chip_id() {
+        Ok(id) => println!("ES8311 chip id {id:02X?} (expected {:02X?})", audio::es8311::CHIP_ID),
+        Err(e) => println!("ES8311 not reachable: {e:?}"),
+    }
+    let mut mic_adc = audio::es7210::Es7210::new(RefCellDevice::new(&bus));
+
+    let i2s = I2s::new(
+        peripherals.I2S0,
+        peripherals.DMA_CH1,
+        TdmConfig::new_tdm_philips()
+            .with_sample_rate(Rate::from_hz(audio::SAMPLE_RATE))
+            .with_data_format(DataFormat::Data16Channel16)
+            .with_channels(Channels::STEREO)
+            .with_signal_loopback(true),
+    )
+    .expect("invalid I2S config")
+    .with_mclk(peripherals.GPIO42);
+    let i2s_tx = i2s
+        .i2s_tx
+        .with_bclk(peripherals.GPIO9)
+        .with_ws(peripherals.GPIO45)
+        .with_dout(peripherals.GPIO8)
+        .build();
+    let i2s_rx = i2s.i2s_rx.with_din(peripherals.GPIO10).build();
+    // MCLK is running now; the codecs can be configured.
+    delay.delay_millis(10);
+    if let Err(e) = codec.init(&delay).and_then(|_| codec.set_volume(70)) {
+        println!("ES8311 init failed: {e:?}");
+    }
+    if let Err(e) = mic_adc.init() {
+        println!("ES7210 init failed: {e:?}");
+    }
+    let amplifier = Output::new(peripherals.GPIO46, Level::Low, OutputConfig::default());
+    let mut audio_io = audio::AudioIo::new(
+        i2s_tx,
+        dma_loop_buffer!(3840),
+        i2s_rx,
+        dma_rx_stream_buffer!(4 * 4092, 1024),
+        amplifier,
+    );
+    let mut mic_levels = (0.0f32, 0.0f32);
+
     let mut touch = touch::Cst9217::new(RefCellDevice::new(&bus));
     let mut rtc = rtc::Pcf85063::new(RefCellDevice::new(&bus));
 
@@ -251,7 +304,14 @@ fn main() -> ! {
             Some(TouchEvent::Move) | None => {}
             Some(TouchEvent::Tap(x, y)) => {
                 println!("tap at ({x}, {y})");
-                if page == 0 {
+                if page == PAGE_AUDIO {
+                    if audio_io.tone_active() {
+                        audio_io.stop_tone();
+                    } else if !audio_io.start_tone() {
+                        println!("tone could not be started");
+                    }
+                    println!("tone {}", if audio_io.tone_active() { "on" } else { "off" });
+                } else if page == 0 {
                     brightness = (brightness + 1) % BRIGHTNESS_LEVELS.len();
                     let _ = panel.set_brightness(BRIGHTNESS_LEVELS[brightness]);
                     println!("brightness 0x{:02X}", BRIGHTNESS_LEVELS[brightness]);
@@ -263,16 +323,30 @@ fn main() -> ! {
             }
         }
         if let Some(n) = nav.take() {
+            let previous = page;
             page = match n {
                 Nav::Next => (page + 1) % PAGE_TITLES.len(),
                 Nav::Prev => (page + PAGE_TITLES.len() - 1) % PAGE_TITLES.len(),
             };
+            if previous == PAGE_AUDIO {
+                audio_io.stop_tone();
+                audio_io.stop_capture();
+            }
+            if page == PAGE_AUDIO && !audio_io.start_capture() {
+                println!("microphone capture could not be started");
+            }
         }
 
         // Slow sensors are polled every 250 ms, the IMU every frame.
         if page == 2 {
             if let Ok(Some(s)) = imu.read_sample() {
                 imu_sample = s;
+            }
+        }
+        if page == PAGE_AUDIO {
+            if let Some((l, r)) = audio_io.read_levels() {
+                // Slow decay so short peaks stay visible.
+                mic_levels = (l.max(mic_levels.0 * 0.85), r.max(mic_levels.1 * 0.85));
             }
         }
         if last_slow_read.elapsed().as_millis() >= 250 {
@@ -286,6 +360,7 @@ fn main() -> ! {
             0 => draw_test_page(&mut fb, touch_pos, brightness),
             1 => draw_power_page(&mut fb, &power_status),
             2 => draw_imu_page(&mut fb, &imu_sample),
+            PAGE_AUDIO => draw_audio_page(&mut fb, mic_levels, audio_io.tone_active()),
             _ => draw_info_page(&mut fb, &found, &mut rtc),
         }
         if let Err(e) = fb.flush(&mut panel) {
@@ -367,6 +442,16 @@ fn draw_imu_page(fb: &mut display::Framebuffer, s: &imu::Sample) {
     ui::bar(fb, 315, 240, (s.accel[1] + 1.0) / 2.0, Rgb565::CYAN);
 }
 
+fn draw_audio_page(fb: &mut display::Framebuffer, levels: (f32, f32), tone: bool) {
+    let lines = [
+        format!("Ton: {} (Tippen)", if tone { "an" } else { "aus" }),
+        String::from("Mikrofon links / rechts"),
+    ];
+    ui::page(fb, PAGE_TITLES[PAGE_AUDIO], PAGE_AUDIO, PAGE_TITLES.len(), &lines);
+    ui::bar(fb, 230, 240, levels.0 * 4.0, Rgb565::GREEN);
+    ui::bar(fb, 255, 240, levels.1 * 4.0, Rgb565::CYAN);
+}
+
 fn draw_info_page(
     fb: &mut display::Framebuffer,
     found: &[(u8, &'static str)],
@@ -390,5 +475,5 @@ fn draw_info_page(
     for (addr, name) in found {
         lines.push(format!("0x{addr:02X} {name}"));
     }
-    ui::page(fb, PAGE_TITLES[3], 3, PAGE_TITLES.len(), &lines);
+    ui::page(fb, PAGE_TITLES[4], 4, PAGE_TITLES.len(), &lines);
 }
