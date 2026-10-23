@@ -1,8 +1,10 @@
 # Tasks
 
+**Phase 1 (Datenblattwerte, ohne Messung):** Gruppe 1 (außer 1.3). **Phase 2 (später, mit Messgerät und Firmware):** 1.3 und Gruppen 2–5.
+
 ## 1. Grundlagen und Datenblattwerte
 
-- [ ] 1.1 Datenblattwerte (ESP32-S3 Schlafmodi und Funk, AXP2101-Ruhestrom, CO5300, QMI8658, Codec) mit Quelle in `docs/stromverbrauch.md` erfassen; prüfen, dass jede Zahl einen Link hat
+- [x] 1.1 Datenblattwerte (ESP32-S3 Schlafmodi und Funk, AXP2101-Ruhestrom, CO5300, QMI8658, Codec) mit Quelle in `docs/stromverbrauch.md` erfassen; prüfen, dass jede Zahl einen Link hat
 - [ ] 1.2 Schaltplan auf nicht abschaltbare Verbraucher prüfen (PSRAM, Flash, Pull-ups, LDOs) und Ergebnis in der Doku festhalten
 - [ ] 1.3 Messaufbau beschreiben und aufbauen (Messgerät am Akku-Anschluss); Referenzmessung "Board aus/Leerlauf" liegt vor
 - [ ] 1.4 MkDocs-Seitengerüst und Navigation für `stromverbrauch`, `schlafmodi`, `ble-energie` anlegen; `mkdocs build --strict` läuft fehlerfrei

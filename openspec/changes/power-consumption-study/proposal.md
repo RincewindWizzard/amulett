@@ -6,6 +6,8 @@ Das Gerät soll später akkubetrieben laufen und per BLE kommunizieren. Ob das m
 
 ## What Changes
 
+**Phasen:** Phase 1 (jetzt) dokumentiert nur, was Datenblätter und Herstellerdoku hergeben. Phase 2 (später, nach Verfügbarkeit eines Messgeräts) umfasst Firmware-Demos und eigene Messungen.
+
 - Firmware-Demos für die Stromsparmodi des ESP32-S3: Modem-Sleep, Light Sleep und Deep Sleep, mit Aufwachquellen (Timer, Taste, Touch-Interrupt, IMU-Interrupt).
 - Abschaltbare Peripherie: Display (Sleep/Off, Versorgungsschienen am AXP2101), Audio, IMU im Low-Power-Modus; Ermittlung, was auf dem Board nicht abschaltbar ist.
 - BLE-Energiedemos: Advertising mit verschiedenen Intervallen, Verbindung mit verschiedenen Connection-Intervallen und Slave Latency, Wake-up für periodische Kommunikation.
