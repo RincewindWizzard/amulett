@@ -1,0 +1,23 @@
+[package]
+name = "amulett"
+version = "0.1.0"
+edition = "2021"
+description = "Firmware for the Waveshare ESP32-S3-Touch-AMOLED-1.75 (ESP32-S3R8)"
+
+[dependencies]
+esp-hal = { version = "1.0.0", features = ["esp32s3", "unstable"] }
+esp-bootloader-esp-idf = { version = "0.4.0", features = ["esp32s3"] }
+esp-backtrace = { version = "0.18.1", features = ["esp32s3", "panic-handler", "println"] }
+esp-println = { version = "0.16.0", features = ["esp32s3", "log-04"] }
+log = "0.4"
+
+[profile.dev]
+# Rust debug builds are too slow for the ESP32
+opt-level = "s"
+
+[profile.release]
+codegen-units = 1
+debug = 2
+lto = "fat"
+opt-level = "s"
+overflow-checks = false
